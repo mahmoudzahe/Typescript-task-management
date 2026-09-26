@@ -71,12 +71,24 @@ export class TaskService {
     }
 
     getTasksByProject(projectId: string): Task[] {
+        const project = this.projectService.getProjectById(projectId);
+
+        if (!project) {
+            throw new Error("Project not found");
+        }
+
         return this.tasks.filter(
             (task) => task.projectId === projectId
         );
     }
 
     getTasksByUser(userId: string): Task[] {
+        const user = this.userService.getUserById(userId);
+
+        if (!user) {
+            throw new Error("User not found");
+        }
+
         return this.tasks.filter(
             (task) => task.assigneeId === userId
         );

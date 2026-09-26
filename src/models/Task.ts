@@ -25,3 +25,7 @@ export interface ResearchTask extends BaseTask {
 }
 
 export type Task = DevelopmentTask | ResearchTask;
+
+export type TaskFilter = Partial<
+    Pick<Task, "projectId" | "assigneeId" | "status" | "type">
+>;

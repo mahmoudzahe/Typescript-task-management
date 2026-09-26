@@ -2,12 +2,14 @@ import { User } from "./models/User";
 import { Project } from "./models/Project";
 import {
     DevelopmentTask,
+    ResearchTask,
     TaskStatus
 } from "./models/Task";
 
 import { UserService } from "./services/UserService";
 import { ProjectService } from "./services/ProjectService";
 import { TaskService } from "./services/TaskService";
+import { TaskQueryService } from "./services/TaskQueryService";
 
 const userService = new UserService();
 const projectService = new ProjectService();
@@ -16,6 +18,8 @@ const taskService = new TaskService(
     projectService,
     userService
 );
+
+const taskQueryService = new TaskQueryService(taskService);
 
 const user: User = {
     id: "u1",
@@ -29,7 +33,7 @@ const project: Project = {
     description: "Build a company website"
 };
 
-const task: DevelopmentTask = {
+const developmentTask: DevelopmentTask = {
     id: "t1",
     title: "Build login page",
     projectId: "p1",
@@ -38,15 +42,37 @@ const task: DevelopmentTask = {
     component: "Login"
 };
 
+const researchTask: ResearchTask = {
+    id: "t2",
+    title: "Research authentication methods",
+    description: "Compare authentication options",
+    projectId: "p1",
+    status: TaskStatus.InProgress,
+    type: "research",
+    researchQuestion: "Which authentication method should we use?"
+};
+
 userService.addUser(user);
 projectService.addProject(project);
-taskService.addTask(task);
+
+taskService.addTask(developmentTask);
+taskService.addTask(researchTask);
 
 taskService.assignTask("t1", "u1");
 
-taskService.updateTaskStatus(
-    "t1",
-    TaskStatus.InProgress
+console.log(
+    "Filtered:",
+    taskQueryService.filterTasks({
+        type: "development"
+    })
 );
 
-console.log(taskService.getTasks());
+console.log(
+    "Search:",
+    taskQueryService.searchTasks("authentication")
+);
+
+console.log(
+    "Sorted:",
+    taskQueryService.sortTasks("title", "asc")
+);
