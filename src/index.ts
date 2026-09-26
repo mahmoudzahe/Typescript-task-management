@@ -10,6 +10,7 @@ import { UserService } from "./services/UserService";
 import { ProjectService } from "./services/ProjectService";
 import { TaskService } from "./services/TaskService";
 import { TaskQueryService } from "./services/TaskQueryService";
+import { TaskStatisticsService } from "./services/TaskStatisticsService";
 
 const userService = new UserService();
 const projectService = new ProjectService();
@@ -20,6 +21,10 @@ const taskService = new TaskService(
 );
 
 const taskQueryService = new TaskQueryService(taskService);
+
+const taskStatisticsService = new TaskStatisticsService(
+    taskService
+);
 
 const user: User = {
     id: "u1",
@@ -75,4 +80,11 @@ console.log(
 console.log(
     "Sorted:",
     taskQueryService.sortTasks("title", "asc")
+);
+
+taskService.updateTaskStatus("t2", TaskStatus.Done);
+
+console.log(
+    "Statistics:",
+    taskStatisticsService.getStatistics()
 );
