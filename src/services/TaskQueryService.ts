@@ -1,4 +1,9 @@
-import { Task, TaskFilter } from "../models/Task";
+import {
+    DevelopmentTask,
+    Task,
+    TaskFilter
+} from "../models/Task";
+
 import { TaskService } from "./TaskService";
 
 export type TaskSortKey = "title" | "status";
@@ -20,12 +25,43 @@ export class TaskQueryService {
         );
     }
 
+    private isDevelopmentTask(
+        task: Task
+    ): task is DevelopmentTask {
+        return task.type === "development";
+    }
+
     searchTasks(query: string): Task[] {
         const value = query.trim().toLowerCase();
 
-        return this.taskService.getTasks().filter((task) =>
-            task.title.toLowerCase().includes(value) ||
-            task.description?.toLowerCase().includes(value)
+        return this.taskService.getTasks().filter((task) => {
+            const commonMatch =
+                task.title.toLowerCase().includes(value) ||
+                task.description?.toLowerCase().includes(value);
+
+            if (commonMatch) {
+                return true;
+            }
+
+            if (this.isDevelopmentTask(task)) {
+                return task.component
+                    .toLowerCase()
+                    .includes(value);
+            }
+
+            return task.researchQuestion
+                .toLowerCase()
+                .includes(value);
+        });
+    }
+
+    private compareByKey<T, K extends keyof T>(
+        first: T,
+        second: T,
+        key: K
+    ): number {
+        return String(first[key]).localeCompare(
+            String(second[key])
         );
     }
 
@@ -35,7 +71,11 @@ export class TaskQueryService {
     ): Task[] {
         const tasks = this.taskService.getTasks().sort(
             (firstTask, secondTask) =>
-                firstTask[key].localeCompare(secondTask[key])
+                this.compareByKey(
+                    firstTask,
+                    secondTask,
+                    key
+                )
         );
 
         return direction === "asc"

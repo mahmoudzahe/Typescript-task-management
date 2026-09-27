@@ -35,9 +35,8 @@ export class TaskService {
 
         this.tasks.push(task);
     }
-
     getTasks(): Task[] {
-        return [...this.tasks];
+    return this.tasks.map((task) => ({ ...task }));
     }
 
     getTaskById(id: string): Task | undefined {
