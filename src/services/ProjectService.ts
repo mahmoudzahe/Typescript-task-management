@@ -4,11 +4,11 @@ export class ProjectService {
     private projects: Project[] = [];
 
     addProject(project: Project): void {
-        const existingProject = this.projects.find(
+        const projectExists = this.projects.some(
             (currentProject) => currentProject.id === project.id
         );
 
-        if (existingProject) {
+        if (projectExists) {
             throw new Error("Project already exists");
         }
 

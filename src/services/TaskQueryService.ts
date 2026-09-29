@@ -13,15 +13,13 @@ export class TaskQueryService {
     constructor(private taskService: TaskService) {}
 
     filterTasks(filter: TaskFilter): Task[] {
+        const filterKeys = Object.keys(filter) as (keyof TaskFilter)[];
+
         return this.taskService.getTasks().filter((task) =>
-            (filter.projectId === undefined ||
-                task.projectId === filter.projectId) &&
-            (filter.assigneeId === undefined ||
-                task.assigneeId === filter.assigneeId) &&
-            (filter.status === undefined ||
-                task.status === filter.status) &&
-            (filter.type === undefined ||
-                task.type === filter.type)
+            filterKeys.every((key) =>
+                filter[key] === undefined ||
+                task[key] === filter[key]
+            )
         );
     }
 
