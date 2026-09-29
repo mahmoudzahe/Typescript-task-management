@@ -7,7 +7,11 @@ export interface TaskStatistics {
     inProgress: number;
     done: number;
     overdue: number;
-    completionRate: string;
+    assignedTasks: number;
+    unassignedTasks: number;
+    developmentTasks: number;
+    researchTasks: number;
+    completionRate: number;
 }
 
 export class TaskStatisticsService {
@@ -32,6 +36,18 @@ export class TaskStatisticsService {
                     result.done++;
                 }
 
+                if (task.assigneeId !== undefined) {
+                    result.assignedTasks++;
+                } else {
+                    result.unassignedTasks++;
+                }
+
+                if (task.type === "development") {
+                    result.developmentTasks++;
+                } else {
+                    result.researchTasks++;
+                }
+
                 if (
                     task.dueDate &&
                     task.dueDate < new Date() &&
@@ -47,16 +63,20 @@ export class TaskStatisticsService {
                 todo: 0,
                 inProgress: 0,
                 done: 0,
-                overdue: 0
+                overdue: 0,
+                assignedTasks: 0,
+                unassignedTasks: 0,
+                developmentTasks: 0,
+                researchTasks: 0
             }
         );
 
         const completionRate =
             statistics.total === 0
-                ? "0%"
-                : `${Math.round(
+                ? 0
+                : Math.round(
                     (statistics.done / statistics.total) * 100
-                )}%`;
+                );
 
         return {
             ...statistics,

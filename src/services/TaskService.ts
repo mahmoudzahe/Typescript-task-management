@@ -11,11 +11,11 @@ export class TaskService {
     ) {}
 
     addTask(task: Task): void {
-        const existingTask = this.tasks.find(
+        const taskExists = this.tasks.some(
             (currentTask) => currentTask.id === task.id
         );
 
-        if (existingTask) {
+        if (taskExists) {
             throw new Error("Task already exists");
         }
 
@@ -35,8 +35,9 @@ export class TaskService {
 
         this.tasks.push(task);
     }
+
     getTasks(): Task[] {
-    return this.tasks.map((task) => ({ ...task }));
+        return this.tasks.map((task) => ({ ...task }));
     }
 
     getTaskById(id: string): Task | undefined {

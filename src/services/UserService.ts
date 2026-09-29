@@ -4,13 +4,13 @@ export class UserService {
     private users: User[] = [];
 
     addUser(user: User): void {
-        const existingUser = this.users.find(
+        const userExists = this.users.some(
             (currentUser) =>
                 currentUser.id === user.id ||
                 currentUser.email === user.email
         );
 
-        if (existingUser) {
+        if (userExists) {
             throw new Error("User already exists");
         }
 
